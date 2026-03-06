@@ -1,23 +1,23 @@
 const admin = require('firebase-admin');
 
-try {
-  const serviceAccountVar = process.env.FIREBASE_SERVICE_ACCOUNT;
-  
-  if (!serviceAccountVar) {
-    throw new Error("La variable FIREBASE_SERVICE_ACCOUNT no está definida en Render");
-  }
+const serviceAccountRaw = process.env.FIREBASE_SERVICE_ACCOUNT;
 
-  // Intentamos parsear el JSON
-  const serviceAccount = JSON.parse(serviceAccountVar);
-
-  if (!admin.apps.length) {
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount)
-    });
-    console.log("Firebase Admin inicializado correctamente");
+if (serviceAccountRaw) {
+  try {
+    // Esto ayuda a manejar posibles problemas de formato en el string de Render
+    const serviceAccount = JSON.parse(serviceAccountRaw);
+    
+    if (!admin.apps.length) {
+      admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount)
+      });
+      console.log("✅ Firebase inicializado con cuenta de servicio");
+    }
+  } catch (e) {
+    console.error("❌ Error al parsear FIREBASE_SERVICE_ACCOUNT:", e.message);
   }
-} catch (error) {
-  console.error("Error inicializando Firebase Admin:", error.message);
+} else {
+  console.error("❌ No se encontró la variable de entorno FIREBASE_SERVICE_ACCOUNT");
 }
 
 module.exports = admin;
