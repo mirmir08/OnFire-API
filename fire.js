@@ -1,23 +1,24 @@
 const admin = require('firebase-admin');
 
-const serviceAccountRaw = process.env.FIREBASE_SERVICE_ACCOUNT;
+// Obtenemos la variable y le quitamos espacios extra al inicio/final
+const serviceAccountRaw = process.env.FIREBASE_SERVICE_ACCOUNT ? process.env.FIREBASE_SERVICE_ACCOUNT.trim() : null;
 
 if (serviceAccountRaw) {
   try {
-    // Esto ayuda a manejar posibles problemas de formato en el string de Render
     const serviceAccount = JSON.parse(serviceAccountRaw);
     
     if (!admin.apps.length) {
       admin.initializeApp({
         credential: admin.credential.cert(serviceAccount)
       });
-      console.log("✅ Firebase inicializado con cuenta de servicio");
+      console.log("✅ Firebase inicializado correctamente");
     }
   } catch (e) {
-    console.error("❌ Error al parsear FIREBASE_SERVICE_ACCOUNT:", e.message);
+    // Este log te dirá exactamente qué está fallando en el parseo
+    console.error("❌ Error crítico al parsear JSON de Firebase:", e.message);
   }
 } else {
-  console.error("❌ No se encontró la variable de entorno FIREBASE_SERVICE_ACCOUNT");
+  console.error("❌ La variable FIREBASE_SERVICE_ACCOUNT está vacía");
 }
 
 module.exports = admin;
