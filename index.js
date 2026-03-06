@@ -26,7 +26,7 @@ app.get('/', (req, res) => {
 app.get('/ver', (req, res) => {
   const db = fire.firestore();
   let wholeData = [];
-  db.collection('Valores').orderBy('fecha', 'asc').get()
+  db.collection('Sensor').orderBy('fecha', 'asc').get()
     .then(snapshot => {
       snapshot.forEach(doc => {
         wholeData.push(doc.data());
@@ -43,7 +43,7 @@ app.get('/ver', (req, res) => {
 app.get('/valor', (req, res) => {
   const db = fire.firestore();
   let wholeData = [];
-  db.collection('Valores').orderBy('fecha', 'desc').limit(1).get()
+  db.collection('Sensor').orderBy('fecha', 'desc').limit(1).get()
     .then(snapshot => {
       snapshot.forEach(doc => {
         wholeData.push(doc.data());
