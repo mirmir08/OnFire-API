@@ -4,13 +4,13 @@ require('firebase/compat/firestore');
 
 // Datos de tu proyecto OnFire!
 const config = {
-  apiKey: "AIzaSyCykZfGQEmxL3YJTRCnOa9G09bxku0C-eY",
-  authDomain: "onfire-32e31.firebaseapp.com",
-  projectId: "onfire-32e31",
-  storageBucket: "onfire-32e31.firebasestorage.app",
-  messagingSenderId: "1020429206860",
-  appId: "1:1020429206860:web:91dbb8e67469e3530e7be9",
-  measurementId: "G-KKCQQQKWJX"
+  apiKey: "apikey",
+  authDomain: "authDomain",
+  projectId: "projectId",
+  storageBucket: "storageBucket",
+  messagingSenderId: "messagingSenderId",
+  appId: "appId",
+  measurementId: "measurementId"
 };
 
 // Evitamos inicializar el app más de una vez
