@@ -1,24 +1,14 @@
-// Usamos el modo compatibilidad para no tener que cambiar todo tu código
-const firebase = require('firebase/compat/app');
-require('firebase/compat/firestore');
+const admin = require('firebase-admin');
 
-// Datos de tu proyecto OnFire!
-const config = {
-  apiKey: "apikey",
-  authDomain: "authDomain",
-  projectId: "projectId",
-  storageBucket: "storageBucket",
-  messagingSenderId: "messagingSenderId",
-  appId: "appId",
-  measurementId: "measurementId"
-};
+// Si configuraste la variable de entorno en Render como te sugerí:
+const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT 
+  ? JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT) 
+  : require("./tu-archivo-de-llaves.json"); // Por si pruebas localmente
 
-// Evitamos inicializar el app más de una vez
-let fire;
-if (!firebase.apps.length) {
-  fire = firebase.initializeApp(config);
-} else {
-  fire = firebase.app();
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+  });
 }
 
-module.exports = fire;
+module.exports = admin;
