@@ -25,7 +25,6 @@ app.get('/', (req, res) => {
 // Obtener todos los valores
 app.get('/ver', (req, res) => {
   const db = fire.firestore();
-  // Se eliminó db.settings({ timestampsInSnapshots: true }) por ser obsoleto
   let wholeData = [];
   db.collection('Valores').orderBy('fecha', 'asc').get()
     .then(snapshot => {
@@ -60,7 +59,6 @@ app.get('/valor', (req, res) => {
 app.post('/insertar', (req, res) => {
   const db = fire.firestore();
   
-  // Mapeo de los datos que enviará el ESP32
   const nuevaAlerta = {
     temp: req.body.temp || 0,
     hum: req.body.hum || 0,
@@ -72,27 +70,23 @@ app.post('/insertar', (req, res) => {
     long: req.body.long || "-104.1279768",
     viento_vel: req.body.viento_vel || 0,
     viento_dir: req.body.viento_dir || 0,
-    // Prioriza la hora del ESP32, si falla usa la del servidor
     fecha: req.body.fecha || new Date().toISOString() 
   };
 
+  // --- CAMBIO CLAVE: Responder inmediatamente para evitar Timeout -11 ---
+  res.status(201).send({ status: 'Recibido correctamente' });
+
+  // Guardar en Firebase sucede después de responder al ESP32
   db.collection('Sensor').add(nuevaAlerta)
     .then(() => {
-      console.log('Datos recibidos del sensor OnFire!:', nuevaAlerta);
-      res.send({
-        ...nuevaAlerta,
-        status: 'Valores de sensores insertados correctamente!'
-      });
+      console.log('Datos guardados en Firebase:', nuevaAlerta.fecha);
     })
     .catch(error => {
       console.error('Error al insertar en Firestore:', error);
-      res.status(500).send({ error: 'Error en la base de datos' });
     });
 });
 
-
-
-// Endpoints para control de Relé (Encender/Apagar)
+// Endpoints para control de Relé
 app.post('/encender', (req, res) => {
   const db = fire.firestore();
   db.collection('Rele').add({
@@ -115,11 +109,9 @@ app.listen(PORT, () => {
   console.log(`Servidor MonitoreO2 escuchando en puerto ${PORT}`);
 });
 
-// Agrega esto al final de tu index.js
-const axios = require('axios'); // Tendrías que instalar axios: npm install axios
-
+const axios = require('axios');
 setInterval(() => {
   axios.get('https://onfire-api.onrender.com')
-    .then(() => console.log('Auto-ping enviado para mantener despierto el servidor'))
+    .then(() => console.log('Auto-ping enviado'))
     .catch((err) => console.error('Error en auto-ping:', err.message));
-}, 840000); // 14 minutos en milisegundos
+}, 840000);
