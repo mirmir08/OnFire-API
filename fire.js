@@ -1,24 +1,23 @@
-// Usamos el modo compatibilidad para no tener que cambiar todo tu código
-const firebase = require('firebase/compat/app');
-require('firebase/compat/firestore');
+const admin = require('firebase-admin');
 
-// Datos de tu proyecto OnFire!
-const config = {
-  apiKey: "apikey",
-  authDomain: "authDomain",
-  projectId: "projectId",
-  storageBucket: "storageBucket",
-  messagingSenderId: "messagingSenderId",
-  appId: "appId",
-  measurementId: "measurementId"
-};
+try {
+  const serviceAccountVar = process.env.FIREBASE_SERVICE_ACCOUNT;
+  
+  if (!serviceAccountVar) {
+    throw new Error("La variable FIREBASE_SERVICE_ACCOUNT no está definida en Render");
+  }
 
-// Evitamos inicializar el app más de una vez
-let fire;
-if (!firebase.apps.length) {
-  fire = firebase.initializeApp(config);
-} else {
-  fire = firebase.app();
+  // Intentamos parsear el JSON
+  const serviceAccount = JSON.parse(serviceAccountVar);
+
+  if (!admin.apps.length) {
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount)
+    });
+    console.log("Firebase Admin inicializado correctamente");
+  }
+} catch (error) {
+  console.error("Error inicializando Firebase Admin:", error.message);
 }
 
-module.exports = fire;
+module.exports = admin;
