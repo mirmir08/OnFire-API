@@ -114,3 +114,12 @@ app.post('/apagar', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Servidor MonitoreO2 escuchando en puerto ${PORT}`);
 });
+
+// Agrega esto al final de tu index.js
+const axios = require('axios'); // Tendrías que instalar axios: npm install axios
+
+setInterval(() => {
+  axios.get('https://onfire-api.onrender.com')
+    .then(() => console.log('Auto-ping enviado para mantener despierto el servidor'))
+    .catch((err) => console.error('Error en auto-ping:', err.message));
+}, 840000); // 14 minutos en milisegundos
